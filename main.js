@@ -73,6 +73,7 @@ function setupAssets() {
     map.draw(osDraw2);
     osDraw.drawImage(osC2, 0, 0);
     draw.translate(c.width / 2, c.height / 2);
+    requestAnimationFrame(drawLoop)
 }
 
 function drawLoop() {
@@ -95,12 +96,12 @@ function checkCombinations() {
     (keys[65]) ? mapInfo.x += 10 * scale: null;
     (keys[83]) ? mapInfo.y += -10 * scale: null;
     (keys[68]) ? mapInfo.x += -10 * scale: null;
-    if (keys[61]) {
-        draw.scale(1.1, 1.1)
-        scale /= 1.1
+    if (keys[61] && scale > 0.5) {
+        draw.scale(1.1, 1.1);
+        scale /= 1.1;
     }
-    if (keys[173]) {
-        draw.scale(1 / 1.1, 1 / 1.1)
-        scale /= 1 / 1.1
+    if (keys[173] && scale < 13) {
+        draw.scale(1 / 1.1, 1 / 1.1);
+        scale /= 1 / 1.1;
     }
 }
