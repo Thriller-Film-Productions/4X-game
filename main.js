@@ -20,14 +20,19 @@ osC2.id = 'off-screen-canvas-2';
 osC2.hidden = false;
 const osDraw2 = osC2.getContext('2d');
 document.body.appendChild(osC2);
+let scale = 1;
 // define global variables and run setup
 let map; // testing
-let mapInfo = {x:0,y:0,scale:1};
-    osDraw.save();
-    osDraw.translate(osC.width/2,0);
-    osDraw.rotate(Math.PI/4); //rotate 45 degrees
-    osDraw.transform(1,-0.35,-0.35,1,0,0); //skew
-    osDraw.save();
+let mapInfo = {
+    x: 0,
+    y: 0,
+    scale: 1
+};
+osDraw.save();
+osDraw.translate(osC.width / 2, 0);
+osDraw.rotate(Math.PI / 4); //rotate 45 degrees
+osDraw.transform(1, -0.35, -0.35, 1, 0, 0); //skew
+osDraw.save();
 
 let assets = [];
 let keys = [];
@@ -42,14 +47,14 @@ async function setup() {
         keys[e.keyCode] = false;
         checkCombinations();
     }, false);
-    c.addEventListener('mousedown',(ev)=>{
+    c.addEventListener('mousedown', (ev) => {
 
     })
     // load img assets into array in background
-    window.addEventListener('load',()=>{
+    window.addEventListener('load', () => {
         setupAssets();
     });
-    window.addEventListener('resize',(ev)=>{
+    window.addEventListener('resize', (ev) => {
         c.width = document.body.clientWidth;
         c.height = document.body.clientHeight;
     });
@@ -59,22 +64,25 @@ async function setup() {
 function setupAssets() {
     let imgdiv = document.getElementById('loaded-images');
     for (let i = 0; i < imgdiv.childElementCount; i++) {
-        assets.push({name:imgdiv.children[i].name,img:imgdiv.children[i]});
+        assets.push({
+            name: imgdiv.children[i].name,
+            img: imgdiv.children[i]
+        });
     }
-    map = new Mapper(100, 100,[1.5,1.3,2,1,1]);
+    map = new Mapper(256, 256, [1.5, 1.3, 2, 1, 1]);
     map.draw(osDraw2);
-    osDraw.drawImage(osC2,0,0);
-    draw.translate(c.width/2,c.height/2);
+    osDraw.drawImage(osC2, 0, 0);
+    draw.translate(c.width / 2, c.height / 2);
 }
 
 function drawLoop() {
-    draw.clearRect(-osC.width,-osC.height,osC.width*10,osC.height*10);
-    draw.drawImage(osC,(-osC.width/2) + mapInfo.x,(-osC.height/2) + mapInfo.y);
+    draw.clearRect(-osC.width, -osC.height, osC.width * 10, osC.height * 10);
+    draw.drawImage(osC, (-osC.width / 2) + mapInfo.x, (-osC.height / 2) + mapInfo.y);
     // draw.fillStyle = "rgb(0, 0, 0)";
     // draw.beginPath();
     // draw.arc(0, 0, 100, 0, Math.PI * 2);
     // draw.fill()
-    (drawLoopy==true) ? requestAnimationFrame(drawLoop) : null;
+    (drawLoopy == true) ? requestAnimationFrame(drawLoop): null;
 }
 
 function noLoop() {
@@ -83,10 +91,16 @@ function noLoop() {
 
 function checkCombinations() {
     // osDraw.clearRect(-Infinity,-Infinity,Infinity,Infinity);
-    (keys[87]) ? mapInfo.y += 10 : null;
-    (keys[65]) ? mapInfo.x += 10 : null;
-    (keys[83]) ? mapInfo.y += -10 : null;
-    (keys[68]) ? mapInfo.x += -10 : null;
-    (keys[61]) ? draw.scale(1.1,1.1) : null;
-    (keys[173]) ? draw.scale(1/1.1,1/1.1) : null;
+    (keys[87]) ? mapInfo.y += 10 * scale: null;
+    (keys[65]) ? mapInfo.x += 10 * scale: null;
+    (keys[83]) ? mapInfo.y += -10 * scale: null;
+    (keys[68]) ? mapInfo.x += -10 * scale: null;
+    if (keys[61]) {
+        draw.scale(1.1, 1.1)
+        scale /= 1.1
+    }
+    if (keys[173]) {
+        draw.scale(1 / 1.1, 1 / 1.1)
+        scale /= 1 / 1.1
+    }
 }

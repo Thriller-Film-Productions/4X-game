@@ -64,7 +64,7 @@ class Mapper {
                                     count[1] += 1;
                                     break;
                                 case "Ocean":
-                                    (count[2] > 2) ? probability[2] += 600: probability[2] += 10;
+                                    (count[2] > 2) ? probability[2] += 1000: probability[2] += 10;
                                     count[2] += 1;
                                     break;
                                 case "Desert":
@@ -105,7 +105,7 @@ class Mapper {
                         canvasContext.drawImage(assets.find((element) => element.name === "Grassland").img, i * canvas.width / this.rows, j * canvas.height / this.cols, canvas.width / this.rows, canvas.height / this.cols);
                         break;
                     case "Forest":
-                        canvasContext.drawImage(assets.find((element)=>element.name === "Forest").img,i * canvas.width / this.rows, j * canvas.height / this.cols, canvas.width / this.rows, canvas.height / this.cols);
+                        canvasContext.drawImage(assets.find((element) => element.name === "Forest").img, i * canvas.width / this.rows, j * canvas.height / this.cols, canvas.width / this.rows, canvas.height / this.cols);
                         break;
                     case "Ocean":
                         canvasContext.drawImage(assets.find((element) => element.name === "Ocean").img, i * canvas.width / this.rows, j * canvas.height / this.cols, canvas.width / this.rows, canvas.height / this.cols);
@@ -126,7 +126,7 @@ class Mapper {
                 }
                 switch (this.cities[i][j]) {
                     case "City - center":
-                        canvasContext.drawImage(assets.find((element)=>element.name === "Test_image1").img,i * canvas.width / this.rows, j * canvas.height / this.cols, canvas.width / this.rows, canvas.height / this.cols);
+                        canvasContext.drawImage(assets.find((element) => element.name === "Test_image1").img, i * canvas.width / this.rows, j * canvas.height / this.cols, canvas.width / this.rows, canvas.height / this.cols);
                         break;
                     case "City - suburb":
                         canvasContext.fillStyle = "rgb(0,200,0)";
