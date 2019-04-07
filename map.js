@@ -137,6 +137,9 @@ class Mapper {
                         canvasContext.fillRect(i * canvas.width / this.rows, j * canvas.height / this.cols, canvas.width / this.rows, canvas.height / this.cols);
                         break;
                 }
+                canvasContext.strokeStyle = "rgb(51, 51, 51)";
+                canvasContext.lineWidth = 2;
+                canvasContext.strokeRect(i * canvas.width / this.rows, j * canvas.height / this.cols, canvas.width / this.rows, canvas.height / this.cols);
             }
         }
     }
