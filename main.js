@@ -32,7 +32,8 @@ osDraw.save();
 osDraw.translate(osC.width / 2, 0);
 osDraw.rotate(Math.PI / 4); //rotate 45 degrees
 osDraw.transform(1, -0.35, -0.35, 1, 0, 0); //skew
-osDraw.save();
+osDraw.transform(1, 0.35, 0.35, 1, 0, 0); //skew
+
 
 let assets = [];
 let keys = [];
@@ -48,7 +49,31 @@ async function setup() {
         checkCombinations();
     }, false);
     c.addEventListener('mousedown', (ev) => {
-
+        console.log(ev.clientX, ev.clientY)
+        let t = translate((c.width / 2) - ev.clientX, (c.height / 2) - ev.clientY, -mapInfo.x + (osC.width / 2), -mapInfo.y + (osC.height / 2)); // Inverts translation
+        console.log(t);
+        osDraw.restore();
+        osDraw.fillStyle = "black";
+        osDraw.beginPath();
+        osDraw.arc(t[0], t[1], 2500, 0, 2 * Math.PI);
+        osDraw.fill();
+        osDraw.closePath();
+        let tr = shear(t[0], t[1]); // Inverts shearing/skewing
+        console.log(tr);
+        // osDraw2.fillStyle = "rgb(125,125,125)";
+        // osDraw2.beginPath();
+        // osDraw2.arc(tr[0], tr[1], 10000, 0, 2 * Math.PI);
+        // osDraw2.fill();
+        // osDraw2.closePath();
+        let r = rotate(tr[0], tr[1], osC.width / 2, 0) // reverses rotation
+        // r = translate(tr[0], tr[1], -osC2.width / 1, -osC2.height / 1)
+        // r = tr
+        console.log(r);
+        osDraw2.fillStyle = "white";
+        osDraw2.beginPath();
+        osDraw2.arc(r[0], r[1], 1000, 0, 2 * Math.PI);
+        osDraw2.fill();
+        osDraw2.closePath();
     })
     // load img assets into array in background
     window.addEventListener('load', () => {
@@ -104,4 +129,19 @@ function checkCombinations() {
         draw.scale(1 / 1.1, 1 / 1.1);
         scale /= 1 / 1.1;
     }
+}
+
+function shear(x, y) {
+    return [x + (1 / -0.35) * y, x * (1 / -0.35) + y]
+}
+
+function rotate(x, y, xc, yc) {
+    // let polar = [Math.atan2(y, x), Math.sqrt(x * x + y * y)]
+    // polar[0] += r;
+    // return [Math.cos(polar[0]) * polar[1], Math.sin(polar[0]) * polar[1]];
+    return [(((x - xc) - (y - yc)) / Math.pow(2, 1 / 2)) + xc, (((x - xc) + (y - yc)) / Math.pow(2, 1 / 2)) + yc]
+}
+
+function translate(x1, y1, x2, y2) {
+    return [x1 + x2, y1 + y2]
 }
