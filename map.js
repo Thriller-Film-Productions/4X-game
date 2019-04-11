@@ -22,26 +22,29 @@ let getRandomItem = function (list, weight) {
     }
 };
 
+let generateMatrix = (rows,cols)=>{
+    let matrix = []
+    for(let i=0;i<rows;i++) {
+        let thisRow = [];
+        for(let j=0;j<cols;j++) {
+            thisRow.push(null);
+        } 
+        matrix.push(thisRow);
+    } 
+    return matrix;
+};
+
 class Mapper {
     constructor(rows, cols, distributionArray) {
-        this.rivers = [];
-        this.cities = [];
-        this.matrix = [];
         this.terrain_types = ["Grassland", "Forest", "Ocean", "Desert", "Mountains", "River", "City - center", "City - suburb", "City - sparse"];
         this.rows = rows;
         this.cols = cols;
+        this.rivers = generateMatrix(this.rows,this.cols);
+        this.cities = generateMatrix(this.rows,this.cols);
+        this.matrix = generateMatrix(this.rows,this.cols);
+        this.highlighted = generateMatrix(this.rows,this.cols);
         this.distrib = distributionArray || [1, 1, 1, 1, 1];
-        let matrixNew = [];
-        for (let i = 0; i < this.rows; i++) {
-            let thisRow = [];
-            for (let j = 0; j < this.cols; j++) {
-                thisRow.push(null);
-            }
-            this.matrix.push(thisRow);
-            matrixNew.push(thisRow);
-            this.cities.push(thisRow);
-            this.rivers.push(thisRow);
-        }
+        let matrixNew = generateMatrix(this.rows,this.cols);
         this.randomize();
         //takes randomized map and tries to put some sense into it
         for (let sigh = 0; sigh < 5; sigh++) {
@@ -50,7 +53,6 @@ class Mapper {
                     let index = () => {
                         let surrounding = this.surrounding(i, j);
                         let output;
-                        let riverProb = 0;
                         let probability = [0, 0, 0, 0, 0];
                         let count = [0, 0, 0, 0, 0];
                         for (let k = 0; k < surrounding.length; k++) {
@@ -95,9 +97,12 @@ class Mapper {
             canvas = document.getElementById('off-screen-canvas')
         } else if (canvasContext == osDraw2) {
             canvas = document.getElementById('off-screen-canvas-2');
+        } else if (canvasContext == osDraw3) {
+            canvas = document.getElementById('off-screen-canvas-3');
         } else {
             canvasContext = draw;
         } // if no canvasContext is given, automatically draws on the visible canvas
+
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
                 switch (this.matrix[i][j]) {
@@ -199,5 +204,24 @@ class Mapper {
     }
     setCity(row, col, tier) {
         this.cities[row][col] = this.terrain_types.slice(6, 9)[tier - 1];
+    }
+    whichSquare(x,y) {
+        let row = Math.floor((this.rows/8000)*x); // how many boxes along the x axis;
+        let col = Math.floor((this.cols/8000)*y); // how many boxes along the y axis;
+        return [row,col];
+    }
+    highlight(row,col) {            
+        drawHighlight2.clearRect(0,0,osChighlight2.width,osChighlight2.height);
+        drawHighlight.clearRect(0,0,osChighlight.width,osChighlight.height);
+        drawHighlight2.strokeStyle = "rgb(153, 255, 255)";
+        drawHighlight2.lineWidth = 10;
+        if (this.highlighted[row][col] == null) {
+            this.highlighted = generateMatrix(this.rows,this.cols);
+            this.highlighted[row][col] = true;
+            drawHighlight2.strokeRect(row * osChighlight2.width / this.rows, col * osChighlight2.height / this.cols, osChighlight2.width / this.rows, osChighlight2.height / this.cols);
+        } else {
+            this.highlighted[row][col] == null;
+        }
+        drawHighlight.drawImage(osChighlight2,0,0);
     }
 }
