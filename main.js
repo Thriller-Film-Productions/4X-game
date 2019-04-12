@@ -9,9 +9,25 @@ let mapInfo = {
 
 let assets = [];
 let keys = [];
+
+// Inputs
+let mouseX = 0;
+let mouseY = 0;
+
 setup();
 
 async function setup() {
+    let bar = document.getElementById('bottom-bar');
+    ()=>{
+        bar.style = "height:100px;width:100%;display:block;backgroundColor:blue;position:absolute;z-index:100000;"
+        bar.style.height = "100px";
+        bar.style.width = "100%";
+        bar.style.display = "block";
+        bar.style.opacity = "80%";
+        bar.style.position = "absolute";
+        bar.style.float = "bottom";
+        bar.style.backgroundColor = "rgb(0,0,0)";
+    }
     window.addEventListener('keydown', e => {
         keys[e.keyCode] = true;
         checkCombinations();
@@ -20,8 +36,11 @@ async function setup() {
         keys[e.keyCode] = false;
         checkCombinations();
     }, false);
+    window.addEventListener('mousemove', e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
     c.addEventListener('mousedown', (ev) => {
-        let t0 = performance.now();
         let t = translate((ev.clientX - (c.width / 2))*scale, (ev.clientY - (c.height / 2))*scale, -mapInfo.x, -mapInfo.y + (osC.height / 2)); // Inverts translation
         let matrixI = [
             [0.5237827897071838,1.0878565311431885,-3998.033935546875],
@@ -39,10 +58,8 @@ async function setup() {
                 point[i] += -4000;
             }
         }
-        let square = map.whichSquare(point[0],point[1]);
+        let square = map.whichSquare(point[0],point[1],true);
         map.highlight(square[0],square[1]);
-        let t1 = performance.now();
-        console.log(t1-t0);
     });
     // load img assets into array in background
     window.addEventListener('load', () => {
@@ -55,6 +72,9 @@ async function setup() {
     window.addEventListener('resize', (ev) => {
         c.width = document.body.clientWidth;
         c.height = document.body.clientHeight;
+        mapInfo.x = 0;
+        mapInfo.y = 0;
+        mapInfo.scale = 1;
     });
     drawLoop();
 }
@@ -71,13 +91,18 @@ function setupAssets() {
 
 function drawMap() {
     map.draw(osDraw2);
-    osDraw.drawImage(osC2, 0, 0);
+    redraw2d();
+}
+
+function redraw2d() {
+    mixed2dDraw.drawImage(osC2,0,0);
+    // osDraw.clearRect(0,0,osC.width,osC.height); // this makes things HECKING SLOW by like 150ms on my comp
+    osDraw.drawImage(mixed2dC,0,0);
 }
 
 function drawLoop() {
     draw.clearRect(-osC.width, -osC.height, osC.width * 10, osC.height * 10);
     draw.drawImage(osC, (-osC.width / 2) + mapInfo.x, (-osC.height / 2) + mapInfo.y);
-    draw.drawImage(osChighlight, (-osC.width / 2) + mapInfo.x, (-osC.height / 2) + mapInfo.y);
     // draw.fillStyle = "rgb(0, 0, 0)";
     // draw.beginPath();
     // draw.arc(0, 0, 100, 0, Math.PI * 2);

@@ -42,7 +42,7 @@ class Mapper {
         this.rivers = generateMatrix(this.rows,this.cols);
         this.cities = generateMatrix(this.rows,this.cols);
         this.matrix = generateMatrix(this.rows,this.cols);
-        this.highlighted = generateMatrix(this.rows,this.cols);
+        this.highlighted = [null,null];
         this.distrib = distributionArray || [1, 1, 1, 1, 1];
         let matrixNew = generateMatrix(this.rows,this.cols);
         this.randomize();
@@ -205,23 +205,46 @@ class Mapper {
     setCity(row, col, tier) {
         this.cities[row][col] = this.terrain_types.slice(6, 9)[tier - 1];
     }
-    whichSquare(x,y) {
-        let row = Math.floor((this.rows/8000)*x); // how many boxes along the x axis;
-        let col = Math.floor((this.cols/8000)*y); // how many boxes along the y axis;
+    whichSquare(x,y,unshifted) {
+        (unshifted !== false) ? unshifted = true : unshifted = false;
+        let row,col;
+        if (unshifted == true) {
+            row = Math.floor((this.rows/8000)*x); // how many boxes along the x axis;
+            col = Math.floor((this.cols/8000)*y); // how many boxes along the y axis;
+        } else {
+            let coor = [x,y,1];
+            let matrixI = [
+                [0.5237827897071838,1.0878565311431885,-3998.033935546875],
+                [-0.5237827897071838,1.0878565311431885,3998.033935546875],
+                [0,0,1]
+            ];
+            let point = [0,0,1];
+            for (let i=0;i<3;i++) {
+                for (let j=0;j<3;j++) {
+                    point[i] += matrixI[i][j]*coor[j];
+                }
+                if (i==0) {
+                    point[i] += 4000;
+                } else if (i==1) {
+                    point[i] += -4000;
+                }
+            }
+            let square = [Math.floor((this.rows/8000)*point[0]),Math.floor((this.rows/8000)*point[1])];
+            row = square[0];
+            col = square[1];
+        }
         return [row,col];
     }
     highlight(row,col) {            
-        drawHighlight2.clearRect(0,0,osChighlight2.width,osChighlight2.height);
-        drawHighlight.clearRect(0,0,osChighlight.width,osChighlight.height);
-        drawHighlight2.strokeStyle = "rgb(153, 255, 255)";
-        drawHighlight2.lineWidth = 10;
-        if (this.highlighted[row][col] == null) {
-            this.highlighted = generateMatrix(this.rows,this.cols);
-            this.highlighted[row][col] = true;
-            drawHighlight2.strokeRect(row * osChighlight2.width / this.rows, col * osChighlight2.height / this.cols, osChighlight2.width / this.rows, osChighlight2.height / this.cols);
+        mixed2dDraw.drawImage(osC2,0,0);
+        mixed2dDraw.strokeStyle = "rgb(153, 255, 255)";
+        mixed2dDraw.lineWidth = (scale/2)+5;
+        if (this.highlighted != [row,col]) {
+            this.highlighted = [row,col];
+            mixed2dDraw.strokeRect(row * mixed2dC.width / this.rows, col * mixed2dC.height / this.cols, mixed2dC.width / this.rows, mixed2dC.height / this.cols);
         } else {
-            this.highlighted[row][col] == null;
+            this.highlighted == [null,null];
         }
-        drawHighlight.drawImage(osChighlight2,0,0);
+        osDraw.drawImage(mixed2dC,0,0);
     }
 }
