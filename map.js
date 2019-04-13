@@ -39,6 +39,7 @@ class Mapper {
         this.terrain_types = ["Grassland", "Forest", "Ocean", "Desert", "Mountains", "River", "City - center", "City - suburb", "City - sparse"];
         this.rows = rows;
         this.cols = cols;
+        this.buildings = generateMatrix(this.rows,this.cols);
         this.rivers = generateMatrix(this.rows,this.cols);
         this.cities = generateMatrix(this.rows,this.cols);
         this.matrix = generateMatrix(this.rows,this.cols);
@@ -235,7 +236,7 @@ class Mapper {
         }
         return [row,col];
     }
-    highlight(row,col) {            
+    highlight(row,col) {         
         mixed2dDraw.drawImage(osC2,0,0);
         mixed2dDraw.strokeStyle = "rgb(153, 255, 255)";
         mixed2dDraw.lineWidth = (scale/2)+5;

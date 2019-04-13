@@ -4,7 +4,6 @@ let map; // testing
 let mapInfo = {
     x: 0,
     y: 0,
-    scale: 1
 };
 
 let assets = [];
@@ -18,7 +17,10 @@ setup();
 
 async function setup() {
     let bar = document.getElementById('bottom-bar');
-    ()=>{
+    setInterval(() => {
+        checkCombinations();
+    }, 30);
+    () => {
         bar.style = "height:100px;width:100%;display:block;backgroundColor:blue;position:absolute;z-index:100000;"
         bar.style.height = "100px";
         bar.style.width = "100%";
@@ -30,41 +32,39 @@ async function setup() {
     }
     window.addEventListener('keydown', e => {
         keys[e.keyCode] = true;
-        checkCombinations();
     }, false);
     window.addEventListener('keyup', e => {
         keys[e.keyCode] = false;
-        checkCombinations();
     }, false);
     window.addEventListener('mousemove', e => {
         mouseX = e.clientX;
         mouseY = e.clientY;
     });
     c.addEventListener('mousedown', (ev) => {
-        let t = translate((ev.clientX - (c.width / 2))*scale, (ev.clientY - (c.height / 2))*scale, -mapInfo.x, -mapInfo.y + (osC.height / 2)); // Inverts translation
+        let t = translate((ev.clientX - (c.width / 2)) * scale, (ev.clientY - (c.height / 2)) * scale, -mapInfo.x, -mapInfo.y + (osC.height / 2)); // Inverts translation
         let matrixI = [
-            [0.5237827897071838,1.0878565311431885,-3998.033935546875],
-            [-0.5237827897071838,1.0878565311431885,3998.033935546875],
-            [0,0,1]
+            [0.5237827897071838, 1.0878565311431885, -3998.033935546875],
+            [-0.5237827897071838, 1.0878565311431885, 3998.033935546875],
+            [0, 0, 1]
         ];
-        let point = [0,0,1];
-        for (let i=0;i<3;i++) {
-            for (let j=0;j<3;j++) {
-                point[i] += matrixI[i][j]*t[j];
+        let point = [0, 0, 1];
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                point[i] += matrixI[i][j] * t[j];
             }
-            if (i==0) {
+            if (i == 0) {
                 point[i] += 4000;
-            } else if (i==1) {
+            } else if (i == 1) {
                 point[i] += -4000;
             }
         }
-        let square = map.whichSquare(point[0],point[1],true);
-        map.highlight(square[0],square[1]);
+        let square = map.whichSquare(point[0], point[1], true);
+        map.highlight(square[0], square[1]);
     });
     // load img assets into array in background
     window.addEventListener('load', () => {
         setupAssets();
-        map = new Mapper(256, 256,[1.5, 1.3, 1.7, 0.5, 1]); // [grassland, forest, ocean, desert, mountains]
+        map = new Mapper(256, 256, [1.5, 1.3, 1.7, 0.5, 1]); // [grassland, forest, ocean, desert, mountains]
         drawMap();
         draw.translate(c.width / 2, c.height / 2);
         requestAnimationFrame(drawLoop);
@@ -74,7 +74,9 @@ async function setup() {
         c.height = document.body.clientHeight;
         mapInfo.x = 0;
         mapInfo.y = 0;
-        mapInfo.scale = 1;
+        scale = 1;
+        draw.restore();
+        draw.translate(c.width / 2, c.height / 2);
     });
     drawLoop();
 }
@@ -95,9 +97,9 @@ function drawMap() {
 }
 
 function redraw2d() {
-    mixed2dDraw.drawImage(osC2,0,0);
+    mixed2dDraw.drawImage(osC2, 0, 0);
     // osDraw.clearRect(0,0,osC.width,osC.height); // this makes things HECKING SLOW by like 150ms on my comp
-    osDraw.drawImage(mixed2dC,0,0);
+    osDraw.drawImage(mixed2dC, 0, 0);
 }
 
 function drawLoop() {
