@@ -93,13 +93,15 @@ function setupAssets() {
 
 function drawMap() {
     map.draw(osDraw2);
-    redraw2d();
+    redraw();
 }
 
-function redraw2d() {
+function redraw() {
     mixed2dDraw.drawImage(osC2, 0, 0);
+    map.draw3d();
     // osDraw.clearRect(0,0,osC.width,osC.height); // this makes things HECKING SLOW by like 150ms on my comp
     osDraw.drawImage(mixed2dC, 0, 0);
+    osDraw.drawImage(mixed3dC, 0, 0);
 }
 
 function drawLoop() {

@@ -3,14 +3,14 @@ const c = document.querySelector("canvas"); // get the only canvas element
 const draw = c.getContext('2d'); // get canvas context
 c.width = document.body.clientWidth; // make canvas full screen
 c.height = document.body.clientHeight;
-// const mixed3dC = document.createElement('canvas');
-// mixed3dC.width = 8000;
-// mixed3dC.height = 8000;
-// mixed3dC.style.position = "absolute";
-// mixed3dC.id = 'mixed-3d-graphics';
-// mixed3dC.hidden = true;
-// const mixed3dDraw = mixed3dC.getContext('2d');
-// document.body.appendChild(mixed3dC);
+const mixed3dC = document.createElement('canvas');
+mixed3dC.width = 8000;
+mixed3dC.height = 8000;
+mixed3dC.style.position = "absolute";
+mixed3dC.id = 'mixed-3d-graphics';
+mixed3dC.hidden = true;
+const mixed3dDraw = mixed3dC.getContext('2d');
+document.body.appendChild(mixed3dC);
 const mixed2dC = document.createElement('canvas');
 mixed2dC.width = 8000;
 mixed2dC.height = 8000;
@@ -43,7 +43,7 @@ document.body.appendChild(osC2);
 draw.save();
 
 // transform 3d map draw
-// mixed3dDraw.transform(1,-0.5,-0.5,1,0,0);
+// mixed3dDraw.transform(0.35,1,1,1,0,0);
 
 // transforms final rendered map
 osDraw.translate(osC.width / 2, 0);

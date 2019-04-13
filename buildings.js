@@ -6,7 +6,6 @@ class Building {
         this.matrix = generateMatrix(this.rows,this.cols);
     }
     build(row,col,type) {
-        
         switch (type) {
             case "Solar":
             break;

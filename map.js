@@ -247,5 +247,34 @@ class Mapper {
             this.highlighted == [null,null];
         }
         osDraw.drawImage(mixed2dC,0,0);
+        osDraw.drawImage(mixed3dC,0,0);
+    }
+    draw3d() {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                switch (this.matrix[i][j]) {
+                    case "Grassland":
+                        break;
+                    case "Forest":
+                        mixed3dDraw.translate((i * 8000 / this.rows)-((3*8000) / (this.rows*4)), (j * 8000 / this.cols)+(8000 / (this.cols*4)));
+                        mixed3dDraw.rotate(-Math.PI/4);
+                        mixed3dDraw.transform(1.3,0,0,1.3,0,0);
+                        mixed3dDraw.drawImage(assets.find((element) => element.name === "Tree").img, 0,0,8000 / this.rows, 8000 / this.cols);
+                        mixed3dDraw.setTransform(1,0,0,1,0,0);              
+                        break;
+                    case "Ocean":
+                        break;
+                    case "Desert":
+                        break;
+                    case "Mountains":
+                        mixed3dDraw.translate((i * 8000 / this.rows)-((3*8000) / (this.rows*4)), (j * 8000 / this.cols)+(8000 / (this.cols*4)));
+                        mixed3dDraw.rotate(-Math.PI/4);
+                        mixed3dDraw.transform(1.3,0,0,1.3,0,0);
+                        mixed3dDraw.drawImage(assets.find((element) => element.name === "Mountain").img, 0,0,8000 / this.rows, 8000 / this.cols);
+                        mixed3dDraw.setTransform(1,0,0,1,0,0);  
+                        break;
+                }
+            }
+        }
     }
 }

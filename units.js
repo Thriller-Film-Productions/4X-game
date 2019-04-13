@@ -26,19 +26,19 @@ function finder(x1, y1, x2, y2, allow) {
     // console.log(found)
 
     // draw pathfinding
-    // mixed2dDraw.strokeStyle = "rgb(51, 51, 51)";
-    // mixed2dDraw.lineWidth = 5;
-    // mixed2dDraw.beginPath();
-    // let hConst = mixed2dC.height / 256;
-    // let wConst = mixed2dC.width / 256;
-    // mixed2dDraw.moveTo(x1 * wConst+wConst/2, y1 * hConst+hConst/2);
-    // for (let i = 0; i < found.length; i++) {
-    //     mixed2dDraw.lineTo(found[i][0] * wConst+wConst/2, found[i][1] * hConst+hConst/2);
-    // }
-    // mixed2dDraw.stroke();
+    mixed2dDraw.strokeStyle = "rgb(51, 51, 51)";
+    mixed2dDraw.lineWidth = 5;
+    mixed2dDraw.beginPath();
+    let hConst = mixed2dC.height / 256;
+    let wConst = mixed2dC.width / 256;
+    mixed2dDraw.moveTo(x1 * wConst+wConst/2, y1 * hConst+hConst/2);
+    for (let i = 0; i < found.length; i++) {
+        mixed2dDraw.lineTo(found[i][0] * wConst+wConst/2, found[i][1] * hConst+hConst/2);
+    }
+    mixed2dDraw.stroke();
 }
 
-// ISSUE: It makes the map SUPER laggy - FIXED I hope!!
+// ISSUE: It makes the map SUPER laggy - PARTIALLY FIXED!!
 setInterval(async () => {
     // let t0=performance.now();
     if (map.highlighted[0]) {
@@ -50,4 +50,4 @@ setInterval(async () => {
     }
     // let t1 = performance.now();
     // console.log(t1-t0);
-}, 50);
+}, 500);
