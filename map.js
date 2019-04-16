@@ -22,26 +22,30 @@ let getRandomItem = function (list, weight) {
     }
 };
 
+let generateMatrix = (rows,cols)=>{
+    let matrix = []
+    for(let i=0;i<rows;i++) {
+        let thisRow = [];
+        for(let j=0;j<cols;j++) {
+            thisRow.push(null);
+        } 
+        matrix.push(thisRow);
+    } 
+    return matrix;
+};
+
 class Mapper {
     constructor(rows, cols, distributionArray) {
-        this.rivers = [];
-        this.cities = [];
-        this.matrix = [];
         this.terrain_types = ["Grassland", "Forest", "Ocean", "Desert", "Mountains", "River", "City - center", "City - suburb", "City - sparse"];
         this.rows = rows;
         this.cols = cols;
+        this.buildings = generateMatrix(this.rows,this.cols);
+        this.rivers = generateMatrix(this.rows,this.cols);
+        this.cities = generateMatrix(this.rows,this.cols);
+        this.matrix = generateMatrix(this.rows,this.cols);
+        this.highlighted = [null,null];
         this.distrib = distributionArray || [1, 1, 1, 1, 1];
-        let matrixNew = [];
-        for (let i = 0; i < this.rows; i++) {
-            let thisRow = [];
-            for (let j = 0; j < this.cols; j++) {
-                thisRow.push(null);
-            }
-            this.matrix.push(thisRow);
-            matrixNew.push(thisRow);
-            this.cities.push(thisRow);
-            this.rivers.push(thisRow);
-        }
+        let matrixNew = generateMatrix(this.rows,this.cols);
         this.randomize();
         //takes randomized map and tries to put some sense into it
         for (let sigh = 0; sigh < 5; sigh++) {
@@ -50,7 +54,6 @@ class Mapper {
                     let index = () => {
                         let surrounding = this.surrounding(i, j);
                         let output;
-                        let riverProb = 0;
                         let probability = [0, 0, 0, 0, 0];
                         let count = [0, 0, 0, 0, 0];
                         for (let k = 0; k < surrounding.length; k++) {
@@ -95,9 +98,12 @@ class Mapper {
             canvas = document.getElementById('off-screen-canvas')
         } else if (canvasContext == osDraw2) {
             canvas = document.getElementById('off-screen-canvas-2');
+        } else if (canvasContext == osDraw3) {
+            canvas = document.getElementById('off-screen-canvas-3');
         } else {
             canvasContext = draw;
         } // if no canvasContext is given, automatically draws on the visible canvas
+
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
                 switch (this.matrix[i][j]) {
@@ -199,5 +205,76 @@ class Mapper {
     }
     setCity(row, col, tier) {
         this.cities[row][col] = this.terrain_types.slice(6, 9)[tier - 1];
+    }
+    whichSquare(x,y,unshifted) {
+        (unshifted !== false) ? unshifted = true : unshifted = false;
+        let row,col;
+        if (unshifted == true) {
+            row = Math.floor((this.rows/8000)*x); // how many boxes along the x axis;
+            col = Math.floor((this.cols/8000)*y); // how many boxes along the y axis;
+        } else {
+            let coor = [x,y,1];
+            let matrixI = [
+                [0.5237827897071838,1.0878565311431885,-3998.033935546875],
+                [-0.5237827897071838,1.0878565311431885,3998.033935546875],
+                [0,0,1]
+            ];
+            let point = [0,0,1];
+            for (let i=0;i<3;i++) {
+                for (let j=0;j<3;j++) {
+                    point[i] += matrixI[i][j]*coor[j];
+                }
+                if (i==0) {
+                    point[i] += 4000;
+                } else if (i==1) {
+                    point[i] += -4000;
+                }
+            }
+            let square = [Math.floor((this.rows/8000)*point[0]),Math.floor((this.rows/8000)*point[1])];
+            row = square[0];
+            col = square[1];
+        }
+        return [row,col];
+    }
+    highlight(row,col) {         
+        mixed2dDraw.drawImage(osC2,0,0);
+        mixed2dDraw.strokeStyle = "rgb(153, 255, 255)";
+        mixed2dDraw.lineWidth = (scale/2)+5;
+        if (this.highlighted != [row,col]) {
+            this.highlighted = [row,col];
+            mixed2dDraw.strokeRect(row * mixed2dC.width / this.rows, col * mixed2dC.height / this.cols, mixed2dC.width / this.rows, mixed2dC.height / this.cols);
+        } else {
+            this.highlighted == [null,null];
+        }
+        osDraw.drawImage(mixed2dC,0,0);
+        osDraw.drawImage(mixed3dC,0,0);
+    }
+    draw3d() {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                switch (this.matrix[i][j]) {
+                    case "Grassland":
+                        break;
+                    case "Forest":
+                        mixed3dDraw.translate((i * 8000 / this.rows)-((3*8000) / (this.rows*4)), (j * 8000 / this.cols)+(8000 / (this.cols*4)));
+                        mixed3dDraw.rotate(-Math.PI/4);
+                        mixed3dDraw.transform(1.3,0,0,1.3,0,0);
+                        mixed3dDraw.drawImage(assets.find((element) => element.name === "Tree").img, 0,0,8000 / this.rows, 8000 / this.cols);
+                        mixed3dDraw.setTransform(1,0,0,1,0,0);              
+                        break;
+                    case "Ocean":
+                        break;
+                    case "Desert":
+                        break;
+                    case "Mountains":
+                        mixed3dDraw.translate((i * 8000 / this.rows)-((3*8000) / (this.rows*4)), (j * 8000 / this.cols)+(8000 / (this.cols*4)));
+                        mixed3dDraw.rotate(-Math.PI/4);
+                        mixed3dDraw.transform(1.3,0,0,1.3,0,0);
+                        mixed3dDraw.drawImage(assets.find((element) => element.name === "Mountain").img, 0,0,8000 / this.rows, 8000 / this.cols);
+                        mixed3dDraw.setTransform(1,0,0,1,0,0);  
+                        break;
+                }
+            }
+        }
     }
 }
