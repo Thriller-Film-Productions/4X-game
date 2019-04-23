@@ -17,7 +17,7 @@ mixed2dC.height = 8000;
 mixed2dC.style.position = "absolute";
 mixed2dC.id = 'mixed-2d-graphics';
 mixed2dC.hidden = true;
-const mixed2dDraw = mixed2dC.getContext('2d');
+const mixed2dDraw = mixed2dC.getContext('2d',{alpha: false});
 document.body.appendChild(mixed2dC);
 // add an off screen canvas for image rotation and such
 const osC = document.createElement('canvas');
@@ -41,9 +41,6 @@ document.body.appendChild(osC2);
 
 //Saves canvas state
 draw.save();
-
-// transform 3d map draw
-// mixed3dDraw.transform(0.35,1,1,1,0,0);
 
 // transforms final rendered map
 osDraw.translate(osC.width / 2, 0);

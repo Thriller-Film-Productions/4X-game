@@ -34,12 +34,25 @@ let generateMatrix = (rows,cols)=>{
     return matrix;
 };
 
+let generateMatrixArray = (rows,cols)=>{
+    let matrix = []
+    for(let i=0;i<rows;i++) {
+        let thisRow = [];
+        for(let j=0;j<cols;j++) {
+            thisRow.push([]);
+        } 
+        matrix.push(thisRow);
+    } 
+    return matrix;
+};
+
 class Mapper {
     constructor(rows, cols, distributionArray) {
         this.terrain_types = ["Grassland", "Forest", "Ocean", "Desert", "Mountains", "River", "City - center", "City - suburb", "City - sparse"];
         this.rows = rows;
         this.cols = cols;
         this.buildings = generateMatrix(this.rows,this.cols);
+        this.units = generateMatrixArray(this.rows,this.cols);
         this.rivers = generateMatrix(this.rows,this.cols);
         this.cities = generateMatrix(this.rows,this.cols);
         this.matrix = generateMatrix(this.rows,this.cols);
@@ -236,18 +249,28 @@ class Mapper {
         }
         return [row,col];
     }
-    highlight(row,col) {         
+    async highlight(row,col) {
+        // console.log([row,col]);
+        // console.log(this.highlighted);
+        // console.log(`${[row,col]}` == `${this.highlighted}`);
+        let t0 = performance.now();         
         mixed2dDraw.drawImage(osC2,0,0);
         mixed2dDraw.strokeStyle = "rgb(153, 255, 255)";
         mixed2dDraw.lineWidth = (scale/2)+5;
-        if (this.highlighted != [row,col]) {
+        if (`${this.highlighted}` != `${[row,col]}`) {
+            let bar = document.querySelector('#bottom-bar');
             this.highlighted = [row,col];
             mixed2dDraw.strokeRect(row * mixed2dC.width / this.rows, col * mixed2dC.height / this.cols, mixed2dC.width / this.rows, mixed2dC.height / this.cols);
+            bar.style.display = "block";
+            bar.children.item(0).innerHTML = this.infoTile(row,col).terrain;
         } else {
-            this.highlighted == [null,null];
+            this.highlighted = [null, null];
+            document.querySelector('#bottom-bar').style.display = "none";
         }
         osDraw.drawImage(mixed2dC,0,0);
         osDraw.drawImage(mixed3dC,0,0);
+        let t1 = performance.now();
+        console.log(t1-t0+"ms");
     }
     draw3d() {
         for (let i = 0; i < this.rows; i++) {
@@ -276,5 +299,8 @@ class Mapper {
                 }
             }
         }
+    }
+    infoTile(row,col) {
+        return {buildings:this.buildings[row][col],units:this.units[row][col],cities:this.cities[row][col],terrain:this.matrix[row][col]};
     }
 }

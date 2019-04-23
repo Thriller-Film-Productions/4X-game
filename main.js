@@ -16,20 +16,9 @@ let mouseY = 0;
 setup();
 
 async function setup() {
-    let bar = document.getElementById('bottom-bar');
     setInterval(() => {
         checkCombinations();
     }, 30);
-    () => {
-        bar.style = "height:100px;width:100%;display:block;backgroundColor:blue;position:absolute;z-index:100000;"
-        bar.style.height = "100px";
-        bar.style.width = "100%";
-        bar.style.display = "block";
-        bar.style.opacity = "80%";
-        bar.style.position = "absolute";
-        bar.style.float = "bottom";
-        bar.style.backgroundColor = "rgb(0,0,0)";
-    }
     window.addEventListener('keydown', e => {
         keys[e.keyCode] = true;
     }, false);
@@ -63,6 +52,10 @@ async function setup() {
     });
     // load img assets into array in background
     window.addEventListener('load', () => {
+        document.querySelector('#loading').style.opacity = 1;
+        document.querySelector('#loading').style.transition = "opacity 1s ease-in-out";
+        document.querySelector('#loading').style.opacity = 0;
+        setTimeout(()=>{document.querySelector('#loading').style.display = "none";},6000);
         setupAssets();
         map = new Mapper(256, 256, [1.5, 1.3, 1.7, 0.5, 1]); // [grassland, forest, ocean, desert, mountains]
         drawMap();
@@ -136,4 +129,9 @@ function checkCombinations() {
 
 function translate(x1, y1, x2, y2) {
     return [x1 + x2, y1 + y2, 1];
+}
+
+async function updateOsDraw() {
+    osDraw.drawImage(mixed2dC,0,0);
+    osDraw.drawImage(mixed3dC,0,0);
 }
